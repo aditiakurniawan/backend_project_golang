@@ -20,14 +20,14 @@ func RepositoryEpisode(db *gorm.DB) *repository {
 
 func (r *repository) FindEpisodes() ([]models.Episode, error) {
 	var episodes []models.Episode
-	err := r.db.Find(&episodes).Error
+	err := r.db.Preload("Film").Find(&episodes).Error
 
 	return episodes, err
 }
 
 func (r *repository) GetEpisode(ID int) (models.Episode, error) {
 	var episode models.Episode
-	err := r.db.First(&episode, ID).Error
+	err := r.db.Preload("Film").First(&episode, ID).Error
 
 	return episode, err
 }
