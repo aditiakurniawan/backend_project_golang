@@ -175,8 +175,3 @@ func convertResponseFilm(u models.Film) filmdto.FilmResponse {
 		Description: u.Description,
 	}
 }
-
-// var data1 = 1
-// var data2 = 2
-// let variable = {data1,data2}
-// console.log(variable.data2)

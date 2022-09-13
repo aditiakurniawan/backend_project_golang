@@ -77,9 +77,9 @@ func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Re
 	transaction := models.Transaction{
 		StartDate: request.StartDate,
 		DueDate:   request.DueDate,
-		UserId:    request.UserId,
-		Attache:   request.Attache,
-		Status:    request.Status,
+		// UserId:    request.UserId,
+		Attache: request.Attache,
+		Status:  request.Status,
 	}
 
 	data, err := h.TransactionRepository.CreateTransaction(transaction)
@@ -172,8 +172,8 @@ func convertResponseTransaction(u models.Transaction) transactiondto.Transaction
 		ID:        u.ID,
 		StartDate: u.StartDate,
 		DueDate:   u.DueDate,
-		UserId:    u.UserId,
-		Attache:   u.Attache,
-		Status:    u.Status,
+		// UserId:    u.UserId,
+		Attache: u.Attache,
+		Status:  u.Status,
 	}
 }

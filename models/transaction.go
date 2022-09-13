@@ -10,8 +10,6 @@ type Transaction struct {
 	User      UsersResponse `json:"user" gorm:"users"`
 	Attache   string        `json:"attache" gorm:"type: varchar(255)"`
 	Status    string        `json:"Status" gorm:"type: varchar(255)"`
-	// CreatedAt time.Time `json:"-"`
-	// UpdatedAt time.Time `json:"-"`
 }
 
 type TransactionResponse struct {
@@ -20,5 +18,5 @@ type TransactionResponse struct {
 }
 
 func (TransactionResponse) TableName() string {
-	return "users"
+	return "transactions"
 }

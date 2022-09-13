@@ -11,5 +11,5 @@ type CategoryResponse struct {
 }
 
 func (CategoryResponse) TableName() string {
-	return "categorys"
+	return "categories"
 }
