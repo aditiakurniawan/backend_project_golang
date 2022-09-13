@@ -171,6 +171,7 @@ func convertResponseFilm(u models.Film) filmdto.FilmResponse {
 		Title:         u.Title,
 		Thumbnailfilm: u.Thumbnailfilm,
 		Year:          u.Year,
-		Description:   u.Description,
+		// Category:      u.Category,
+		Description: u.Description,
 	}
 }

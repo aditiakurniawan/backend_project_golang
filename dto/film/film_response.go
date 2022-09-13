@@ -6,5 +6,5 @@ type FilmResponse struct {
 	Thumbnailfilm string `json:"thumbnailfilm" gorm:"type:varchar(255)"`
 	Year          string `json:"year" form:"year" gorm:"type: text"`
 	Description   string `json:"description" gorm:"type: text" `
-	CategoryID    int    `json:"categoryid"`
+	Category      int    `json:"category"`
 }

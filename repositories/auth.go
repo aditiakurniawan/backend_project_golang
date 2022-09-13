@@ -27,3 +27,10 @@ func (r *repository) Login(email string) (models.User, error) {
 
 	return user, err
 }
+
+func (r *repository) Getuser(ID int) (models.User, error) {
+	var user models.User
+	err := r.db.First(&user, ID).Error
+
+	return user, err
+}

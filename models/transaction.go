@@ -1,11 +1,11 @@
 package models
 
-import "time"
+// import "time"
 
 type Transaction struct {
 	ID        int           `json:"id"`
-	StartDate time.Time     `json:"-"`
-	DueDate   time.Time     `json:"-"`
+	StartDate string        `json:"-"`
+	DueDate   string        `json:"-"`
 	UserId    int           `json:"UserId"`
 	User      UsersResponse `json:"user" gorm:"users"`
 	Attache   string        `json:"attache" gorm:"type: varchar(255)"`

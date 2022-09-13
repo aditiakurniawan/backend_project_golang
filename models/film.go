@@ -8,8 +8,8 @@ type Film struct {
 	Category      CategoryResponse `json:"category" gorm:"categorys"`
 	CategoryID    int              `json:"-" form:"-" gorm:"-"`
 	Description   string           `json:"description" gorm:"type: text"`
-	UserId        int              `json:"UserId"`
-	User          UsersResponse    `json:"user" gorm:"users"`
+	// UserId        int              `json:"UserId"`
+	// User          UsersResponse    `json:"user" gorm:"users"`
 }
 
 type FilmResponse struct {

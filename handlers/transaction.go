@@ -114,17 +114,14 @@ func (h *handlerTransaction) UpdateTransaction(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// if request.StartDate != "" {
-	// 	transaction.StartDate = request.StartDate
-	// }
+	if request.StartDate != "" {
+		transaction.StartDate = request.StartDate
+	}
 
-	// if request.DueDate != "" {
-	// 	transaction.DueDate = request.DueDate
-	// }
+	if request.DueDate != "" {
+		transaction.DueDate = request.DueDate
+	}
 
-	// if request.UserId != "" {
-	// 	transaction.UserId = request.UserId
-	// }
 	if request.Attache != "" {
 		transaction.Attache = request.Attache
 	}
