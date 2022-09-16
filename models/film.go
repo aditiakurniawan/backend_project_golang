@@ -12,12 +12,11 @@ type Film struct {
 
 type FilmResponse struct {
 	ID            int              `json:"id"`
-	Name          string           `json:"name"`
 	Title         string           `json:"title"`
 	Thumbnailfilm string           `json:"thumbnailfilm"`
 	Year          string           `json:"year"`
-	Category      CategoryResponse `json:"category"`
 	CategoryID    int              `json:"-"`
+	Category      CategoryResponse `json:"category"`
 	Description   string           `json:"description" gorm:"type: text"`
 }
 

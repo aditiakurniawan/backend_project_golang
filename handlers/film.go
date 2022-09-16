@@ -7,16 +7,20 @@ import (
 	"dumflix/models"
 	"dumflix/repositories"
 	"encoding/json"
-	"net/http"
-	"strconv"
-
+	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
+	"net/http"
+	"os"
+	"strconv"
 )
 
 type handlerFilm struct {
 	FilmRepository repositories.FilmRepository
 }
+
+var PathFile = os.Getenv("PATH_FILE")
 
 func HandlerFilm(FilmRepository repositories.FilmRepository) *handlerFilm {
 	return &handlerFilm{FilmRepository}
@@ -31,6 +35,10 @@ func (h *handlerFilm) FindFilms(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
+	for i, p := range films {
+		films[i].Thumbnailfilm = os.Getenv("PATH_FILE") + p.Thumbnailfilm
+	}
+
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: films}
 	json.NewEncoder(w).Encode(response)
@@ -41,7 +49,7 @@ func (h *handlerFilm) GetFilm(w http.ResponseWriter, r *http.Request) {
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
-	film, err := h.FilmRepository.GetFilm(id)
+	films, err := h.FilmRepository.GetFilm(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
@@ -49,20 +57,30 @@ func (h *handlerFilm) GetFilm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	films.Thumbnailfilm = os.Getenv("PATH_FILE") + films.Thumbnailfilm
+
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseFilm(film)}
+	response := dto.SuccessResult{Code: http.StatusOK, Data: films}
 	json.NewEncoder(w).Encode(response)
 }
 
 func (h *handlerFilm) CreateFilm(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(filmdto.FilmRequest)
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-		json.NewEncoder(w).Encode(response)
-		return
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	fmt.Println(userId)
+
+	dataContex := r.Context().Value("dataFile")
+	filename := dataContex.(string)
+
+	category_id, _ := strconv.Atoi(r.FormValue("category_id"))
+	request := filmdto.FilmRequest{
+		Title:       r.FormValue("title"),
+		Description: r.FormValue("description"),
+		Year:        r.FormValue("year"),
+		CategoryID:  category_id,
 	}
 
 	validation := validator.New()
@@ -76,9 +94,10 @@ func (h *handlerFilm) CreateFilm(w http.ResponseWriter, r *http.Request) {
 
 	film := models.Film{
 		Title:         request.Title,
-		Thumbnailfilm: request.Thumbnailfilm,
+		Thumbnailfilm: filename,
 		Year:          request.Year,
 		Description:   request.Description,
+		CategoryID:    request.CategoryID,
 	}
 
 	data, err := h.FilmRepository.CreateFilm(film)
@@ -87,6 +106,8 @@ func (h *handlerFilm) CreateFilm(w http.ResponseWriter, r *http.Request) {
 		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
 		json.NewEncoder(w).Encode(response)
 	}
+
+	film, _ = h.FilmRepository.GetFilm(film.ID)
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseFilm(data)}
@@ -171,7 +192,7 @@ func convertResponseFilm(u models.Film) filmdto.FilmResponse {
 		Title:         u.Title,
 		Thumbnailfilm: u.Thumbnailfilm,
 		Year:          u.Year,
+		Description:   u.Description,
 		// Category:      u.Category,
-		Description: u.Description,
 	}
 }

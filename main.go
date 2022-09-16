@@ -8,16 +8,16 @@ import (
 
 	"github.com/gorilla/mux"
 
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 	"net/http"
 )
 
 func main() {
 
-	// errEnv := godotenv.Load()
-	// if errEnv != nil {
-	// 	panic("Failed to load env file")
-	// }
+	errEnv := godotenv.Load()
+	if errEnv != nil {
+		panic("Failed to load env file")
+	}
 	// initial DB
 	mysql.DatabaseInit()
 
@@ -27,7 +27,7 @@ func main() {
 	r := mux.NewRouter()
 
 	//path file
-	// r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads")))) // add this code
+	r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
 	routes.RouteInit(r.PathPrefix("/api/v1").Subrouter())
 

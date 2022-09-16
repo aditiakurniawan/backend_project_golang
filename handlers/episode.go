@@ -7,11 +7,13 @@ import (
 	"dumflix/models"
 	"dumflix/repositories"
 	"encoding/json"
-	"net/http"
-	"strconv"
-
+	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
+	"net/http"
+	// "os"
+	"strconv"
 )
 
 type handlerEpisode struct {
@@ -58,12 +60,21 @@ func (h *handlerEpisode) GetEpisode(w http.ResponseWriter, r *http.Request) {
 func (h *handlerEpisode) CreateEpisode(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(episodedto.EpisodeRequest)
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-		json.NewEncoder(w).Encode(response)
-		return
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	fmt.Println(userId)
+
+	dataContex := r.Context().Value("dataFile") // add this code
+	filename := dataContex.(string)
+	// add this code
+	film_id, _ := strconv.Atoi(r.FormValue("film_id"))
+	request := episodedto.EpisodeRequest{
+		Title:         r.FormValue("title"),
+		Thumbnailfilm: filename,
+		Linkfilm:      r.FormValue("linkfilm"),
+		FilmID:        film_id,
+		Description:   r.FormValue("description"),
 	}
 
 	validation := validator.New()
@@ -77,8 +88,10 @@ func (h *handlerEpisode) CreateEpisode(w http.ResponseWriter, r *http.Request) {
 
 	episode := models.Episode{
 		Title:         request.Title,
-		Thumbnailfilm: request.Thumbnailfilm,
+		Thumbnailfilm: filename,
 		Linkfilm:      request.Linkfilm,
+		FilmID:        film_id,
+		Description:   request.Description,
 	}
 
 	data, err := h.EpisodeRepository.CreateEpisode(episode)
@@ -168,6 +181,5 @@ func convertResponseEpisode(u models.Episode) episodedto.EpisodeResponse {
 		Title:         u.Title,
 		Thumbnailfilm: u.Thumbnailfilm,
 		Linkfilm:      u.Linkfilm,
-		// Film: u.Film
 	}
 }
